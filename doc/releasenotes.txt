@@ -7,6 +7,9 @@ Project website: http://stefanfrings.de/smstools
 
 As you can see, development of version 2.x has been stopped. There are still many downloads each month, but I did not receive a single bug report since 2007! The program runs very stable although it might appear somewhat outdated.
 
+14.02.2019    2.2.21
+Fixed missing include for the waitpid() function.
+
 26.11.2007    2.2.20 
 A bug in smsevent script has been fixed, this script did not concatenate long messages on Fedora.
 

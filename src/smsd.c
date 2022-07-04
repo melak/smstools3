@@ -22,6 +22,8 @@ mailto: stefan@stefanfrings.de
 #include <mm.h>
 #endif
 #include <fcntl.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 #include "extras.h"
 #include "locking.h"
