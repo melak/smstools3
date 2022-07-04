@@ -3,8 +3,7 @@ SMS Server Tools 3
 Copyright (C) 2006- Keijo Kasvi
 http://smstools3.kekekasvi.com/
 
-Based on SMS Server Tools 2 from Stefan Frings
-http://www.meinemullemaus.de/
+Based on SMS Server Tools 2, http://stefanfrings.de/smstools/
 SMS Server Tools version 2 and below are Copyright (C) Stefan Frings.
 
 This program is free software unless you got it under another license directly
@@ -16,9 +15,15 @@ Either version 2 of the License, or (at your option) any later version.
 #ifndef MODEMINIT_H
 #define MODEMINIT_H
 
+#include <regex.h>
+
 char *get_gsm_cme_error(int code);
 char *get_gsm_cms_error(int code);
 char *get_gsm_error(char *answer);
+
+int get_read_timeout(char *keyword);
+int set_read_timeout(char *error, int size_error, char *keyword, int value);
+void log_read_timeouts(int level);
 
 char *explain_csq_buffer(char *buffer, int short_form, int ssi, int ber, int signal_quality_ber_ignore);
 void explain_csq(int loglevel, int short_form, char *answer, int signal_quality_ber_ignore);
@@ -48,16 +53,20 @@ int initialize_modem_receiving();
 
 // Sends a command to the modem and waits max timout*0.1 seconds for an answer.
 // The function returns the length of the answer.
-// The function waits until a timeout occurs or the expected answer occurs. 
+// The function waits until a timeout occurs or the expected answer occurs.
 // modem is the serial port file handle
 // command is the command to send (may be empty or NULL)
 // answer is the received answer
 // max is the maxmum allowed size of the answer
 // timeout control the time how long to wait for the answer
-// expect is an extended regular expression. If this matches the modem answer, 
+// expect is an extended regular expression. If this matches the modem answer,
 // then the program stops waiting for the timeout (may be empty or NULL).
-int put_command(char *command, char *answer, int max, int timeout_count, char *expect);
-int put_command0(char *command, char *answer, int max, int timeout_count, char *expect, int silent);
+int put_command(char *command, char *answer, int max, char *timeout_count, char *expect);
+int put_command0(char *command, char *answer, int max, char *timeout_count, char *expect, int silent);
+
+int read_from_modem0(char *answer, int max, int timeout, regex_t *re, char *expect);
+
+int test_openmodem();
 
 int talk_with_modem();
 

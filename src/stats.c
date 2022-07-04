@@ -3,8 +3,7 @@ SMS Server Tools 3
 Copyright (C) 2006- Keijo Kasvi
 http://smstools3.kekekasvi.com/
 
-Based on SMS Server Tools 2 from Stefan Frings
-http://www.meinemullemaus.de/
+Based on SMS Server Tools 2, http://stefanfrings.de/smstools/
 SMS Server Tools version 2 and below are Copyright (C) Stefan Frings.
 
 This program is free software unless you got it under another license directly
@@ -47,13 +46,17 @@ void initstats()
   //MM_create(DEVICES*sizeof(_stats),tempnam(0,0));
 
   char filename[PATH_MAX];
+  size_t size;
 
   // mm library also defaults to /tmp directory with pid,
   // .sem will be added to name inside mm.
   sprintf(filename, MM_CORE_FNAME, (int)getpid());
 
-  // 3.1.5: return value is now checked:
-  if (MM_create(NUMBER_OF_MODEMS *sizeof(_stats) +SIZE_SHARED_BUFFER, filename) == 0)
+  // 3.1.18: Fix: Each allocation needs 16 bytes more space. If number of modems was set
+  // to 124 or more, there was not enough shared memory available.
+  //if (MM_create(NUMBER_OF_MODEMS *sizeof(_stats) +SIZE_SHARED_BUFFER, filename) == 0)
+  size = NUMBER_OF_MODEMS * (sizeof(_stats) + 16) + SIZE_SHARED_BUFFER + 16;
+  if (MM_create(size, filename) == 0)
   {
     writelogfile0(LOG_ERR, 0, tb_sprintf("Cannot create shared memory for statistics."));
     alarm_handler0(LOG_ERR, tb);
@@ -207,6 +210,7 @@ void loadstats()
 
 void print_status()
 {
+#ifndef NOSTATS
   int j;
 
   if (printstatus)
@@ -220,10 +224,12 @@ void print_status()
       printf("%s\n",newstatus);
     }
   }
+#endif
 }
 
 void checkwritestats()
 {
+#ifndef NOSTATS
   time_t now;
   time_t next_time;
   char filename[PATH_MAX];
@@ -301,6 +307,7 @@ void checkwritestats()
       }
     }
   }
+#endif
 }
 
 // 3.1.1:
@@ -370,10 +377,16 @@ void write_status()
       if ((fp = fopen(fname_tmp, "w")))
       {
         if (!longest_modemname)
+        {
           for (i = 0; i < NUMBER_OF_MODEMS; i++)
             if (devices[i].name[0])
               if (strlen(devices[i].name) > longest_modemname)
                 longest_modemname = strlen(devices[i].name);
+
+          if (status_include_uptime)
+            if (longest_modemname < 5) // "Start"
+              longest_modemname = 5;
+        }          
 
         t = time(0);
         strftime(buffer, sizeof(buffer), datetime_format, localtime(&t));
@@ -438,6 +451,16 @@ void write_status()
 
           fprintf(fp, "\n");
         }  
+
+        // 3.1.16beta:
+        if (status_include_uptime)
+        {
+          char upstr[64];
+          
+          strftime(buffer, sizeof(buffer), datetime_format, localtime(&process_start_time));
+          make_uptime_string(upstr, sizeof(upstr), t - process_start_time);
+          fprintf(fp, "\nStart:%s\t%s,\tup %s\n", (longest_modemname >= 7)? "\t" : "", buffer, upstr);
+        }
 
         fclose(fp);
 
