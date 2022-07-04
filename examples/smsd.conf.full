@@ -1,12 +1,15 @@
 # Example smsd.conf. Read the manual for a description
+# This sample configuration is no more updated.
+# See the manual for all possible configuration settings.
 
 devices = GSM1, GSM2
 outgoing = /var/spool/sms/outgoing
 checked = /var/spool/sms/checked
 #failed = /var/spool/sms/failed
 incoming = /var/spool/sms/incoming
+#report = /var/spool/sms/report
 #sent = /var/spool/sms/sent
-mypath = /usr/local/bin
+#mypath = /usr/local/bin
 #logfile = /var/log/smsd.log
 loglevel = 7
 #alarmhandler = /usr/local/bin/alarmevent
@@ -14,6 +17,7 @@ alarmlevel = 4
 delaytime = 10
 errorsleeptime = 10
 blocktime = 3600
+#blockafter = 3
 #eventhandler = /usr/local/bin/smsevent
 #stats = /var/log/smsd_stats
 #stats_interval = 3600
@@ -24,6 +28,23 @@ blocktime = 3600
 receive_before_send = no
 # autosplit 0=no 1=yes 2=with text numbers 3=concatenated
 autosplit = 3
+# store_received_pdu 0=no, 1=unsupported, 2=unsupported and 8bit, 3=all
+#store_received_pdu = 1
+#validity = 255
+#decode_unicode_text = no
+#internal_combine = no
+#user = smsd
+#group = dialout
+#infofile = /var/run/sms/smsd.working
+#pidfile = /var/run/sms/smsd.pid
+#keep_filename = no
+#store_original_filename = yes
+#regular_run = /var/spool/sms/regular_run
+#regular_run_interval = 300
+#admin_to = (number)
+#terminal = no
+#filename_preview = 80
+#incoming_utf8 = yes
 
 [queues]
 # Commented lines are examples for germany
@@ -61,6 +82,17 @@ cs_convert = yes
 report = no
 memory_start = 1
 #eventhandler = /usr/local/bin/smsevent
+#primary_memory = memory name
+#secondary_memory = memory name
+#secondary_memory_max = number
+#pdu_from_file = /var/spool/sms/GSM1-PDU
+#sending_disabled = no
+#decode_unicode_text = no
+#internal_combine = no
+#pinsleeptime = 5
+#admin_to = (number)
+#message_limit = 20
+#message_count_clear = 60
 
 [GSM2]
 init = ATE0
@@ -78,3 +110,14 @@ cs_convert = yes
 report = no
 memory_start = 1
 #eventhandler = /usr/local/bin/smsevent
+#primary_memory = memory name
+#secondary_memory = memory name
+#secondary_memory_max = number
+#pdu_from_file = /var/spool/sms/GSM2-PDU
+#sending_disabled = no
+#decode_unicode_text = no
+#internal_combine = no
+#pinsleeptime = 5
+#admin_to = (number)
+#message_limit = 20
+#message_count_clear = 60

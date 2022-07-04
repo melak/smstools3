@@ -1,4 +1,4 @@
-#!/usr/bin/gawk -f
+#!/bin/gawk -f
 
 # This script reads a hex-dump and converts it to a binary file.
 # The hex-dump must contain one or more hexadecimal numbers separated

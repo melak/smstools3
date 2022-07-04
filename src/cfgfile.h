@@ -1,16 +1,16 @@
 /*
+SMS Server Tools 3
+Copyright (C) 2006- Keijo Kasvi
+http://smstools3.kekekasvi.com/
 
-SMS Server Tools
-Copyright (C) Stefan Frings
+Based on SMS Server Tools 2 from Stefan Frings
+http://www.meinemullemaus.de/
+SMS Server Tools version 2 and below are Copyright (C) Stefan Frings.
 
 This program is free software unless you got it under another license directly
-from the author. You can redistribute it and/or modify it under the terms of 
+from the author. You can redistribute it and/or modify it under the terms of
 the GNU General Public License as published by the Free Software Foundation.
 Either version 2 of the License, or (at your option) any later version.
-
-http://stefanfrings.de/
-mailto: stefan@stefanfrings.de
-
 */
 
 #ifndef CFGFILE_H
@@ -21,17 +21,14 @@ mailto: stefan@stefanfrings.de
 /*  Gets a single parameter from a list of parameters wich uses colons
 to separate them. Returns 1 if successful. */
 
-int getsubparam( char*  parameter, 
-                 int n, 
+int getsubparam_delim(char*  parameter,
+                      int n,
+                      char*  subparam,  int size_subparam, 
+                      char delim);
+
+int getsubparam(char*  parameter, 
+                int n, 
                 char*  subparam,  int size_subparam);
-
-
-/* Converts a string to a boolean value. The string can be:
-   1=  true, yes, on, 1
-   0 = all other strings
-   Only the first character is significant. */
-		
-int yesno( char*  value);
 
 
 /* Searches for a section [name] in a config file and goes to the

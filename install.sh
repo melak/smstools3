@@ -1,11 +1,33 @@
 #!/bin/sh
 #Do not run directly. This is a helper script for make.
 
-# Remember to edit the config file if you change these default path's.
-BINDIR=/usr/local/bin
-SPOOLDIR=/var/spool/sms
+BINDIR=$1
+if [ -z "$BINDIR" ]; then
+  BINDIR=/usr/local/bin
+fi
 
+makepath()
+{
+  p="$1"
+  (
+    # Absolut Unix.
+    if echo $p | grep '^/' >/dev/null
+    then
+      cd /
+    fi
 
+    # This will break if $1 contains a space.
+    for c in `echo $p | tr '/' ' '`
+    do
+      if [ -d "$c" ] || mkdir "$c"
+      then
+        cd "$c" || return $?
+      else
+        echo "failed to create $c" >&2; return $?
+      fi
+    done
+  )
+}
 
 copy()
 {
@@ -53,6 +75,7 @@ if [ ! -f src/smsd ] && [ ! -f src/smsd.exe ]; then
 fi
 
 echo "Installing binary program files"
+makepath $BINDIR
 if [ -f src/smsd.exe ]; then
   forcecopy src/smsd.exe $BINDIR/smsd.exe
 else
@@ -71,20 +94,28 @@ echo "Installing config file"
 copy examples/smsd.conf.easy /etc/smsd.conf
 
 echo "Creating minimum spool directories"
-makedir $SPOOLDIR
-makedir $SPOOLDIR/incoming
-makedir $SPOOLDIR/outgoing
-makedir $SPOOLDIR/checked
+makedir /var/spool
+makedir /var/spool/sms
+makedir /var/spool/sms/incoming
+makedir /var/spool/sms/outgoing
+makedir /var/spool/sms/checked
 
 echo "Installing start-script"
+SMS3SCRIPT=scripts/sms3
 if [ -d /etc/init.d ]; then
-  copy scripts/sms /etc/init.d/sms 
+  copy scripts/sms3 /etc/init.d/sms3
+  SMS3SCRIPT=/etc/init.d/sms3
 elif [ -d /sbin/init.d ]; then
-   copy scripts/sms /sbin/init.d/sms
+  copy scripts/sms3 /sbin/init.d/sms3
+  SMS3SCRIPT=/sbin/init.d/sms3
 else
-  echo "  I do not know where to copy scripts/sms. Please find out yourself."
+  echo "  I do not know where to copy scripts/sms3. Please find out yourself."
 fi
 
 echo ""
 echo "Example script files are not installed automatically."
 echo 'Please dont forget to edit /etc/smsd.conf.'
+if [ "$BINDIR" != "/usr/local/bin" ]; then
+  echo "You have installed executables to $BINDIR,"
+  echo "you should manually edit $SMS3SCRIPT script."
+fi
