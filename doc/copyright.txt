@@ -1,0 +1,6 @@
+The SMS Server Tools are published under the General Public License.
+http://www.gnu.org/copyleft/gpl.html
+
+Author and Copyright owner: Stefan Frings
+Email:  stefan@stefanfrings.de
+Project website: http://stefanfrings.de/smstools

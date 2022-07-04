@@ -1,0 +1,98 @@
+SMS Server Tools
+Hardware Compatibility
+
+My Software needs a GSM modem with SMS command set according to the european specifications 
+GSM 07.05 (=ETSI TS 300 585) and GSM 03.38 (=ETSI TS 100 900).
+
+When a vendor writes "SMS command set" without giving the
+specification names, then the device typically supports a subset of
+this specification. In this case you can surely send 7bit text messages
+and you can probably receive them. But its not sure, if status reports,
+binary messages or unicode messages work.
+
+Mobile phones have more often compatibility issues than real GSM modems.
+
+The following list is incomplete. It shows devices that are reported as well working:
+
+Cepag GS64 Terminal
+Falcom A1 (mode=old, baudrate=9600)
+Falcom A2 (baudrate=9600)
+Falcom A2-D (baudrate=9600)
+Falcom Twist Serial
+Falcom Twist MC35 (init=AT+CNMI=2,0,0,2,1)
+Falcom Tango
+Falcom Samba (init=AT^SSMSS=1+CPMS="MT")
+Motorola G18 (init=ATE0)
+Moxa OnCell G2110
+Multitech Modem MTCBA-G-F2
+Multitech Modem MTCBA-G-F4
+Nokia 30 (status report not tested)
+Nokia 22 (baudrate=115200)
+Siemens M10 (baudrate=9600)
+Siemens M20 (baudrate=19200 Status report works fine with some firmware versions.)
+Siemens TC35 (init=AT+CNMI=2,0,0,2,1 Some firmware versions are bad)
+Siemens MC35i (init=AT+CPMS="SM")
+Siemens TC65 (init=AT+CPMS="SM","SM","SM")
+Wavecom M1206
+Wavecom 1206 b
+Wavecom M1306B
+
+Option iCon 225 HSDPA modem (see Note 4)
+Vodafone Mobile Connect Card GPRS, from Option (see Note 3)
+Vodafone Mobile Connect Card 3G/GPRS, from Option (see Note 3)
+Vodafone Mobile Connect Card 3G/W-LAN/GPRS, from Option (see Note 3)
+
+Ericsson GM22 (see Note 1)
+Ericsson R320s (see Note 2)
+Ericsson R320 (init=AT+CPMS="SM")
+Ericsson T39m (init=AT+CPMS="ME","ME","ME")
+Nokia 6210e
+Nokia 6310
+Nokia 7110 (only with original RS232 cable)
+Sharp GX-10 (only infrared tested)
+Siemens S25
+Siemens C35 (baudrate=19200)
+Siemens S35i
+Siemens M45 (init=AT+CPMS="SM")
+Siemens M50
+Sony-Ericsson T300 (init=AT+CPMS="ME", baudrate=115200)
+Sony Ericsson T60
+Sony Ericsson T68
+Sony Ericsson T65 (do not use kudzu on the serial port)
+ZTE MF622 (memory_start=0)
+
+Probably all mobile phones support status report but you cannot
+read them out with a computer. Status reports appear only on the phones display.
+
+<h2>Serial adapter and converter</h2>
+
+USB2Serial adpater cables, based on Prolific PL2303 chip
+USB2Serial adpater cables, based on FTDI chips
+USB2Serial adpater cables, based on Silabs CP2102 chip
+Digi Etherlite ethernet to serial
+Equinox multi Serial PCI cards
+
+Note 1)
+You must cut pin 4 (wich is DTR) of the serial connector because the phone
+disables AT command set if the pin is connected and active. The GM22 does
+not support ascii mode. Mode=new and baudrate=9600 are the correct settings.
+
+Note 2)
+Replace put_command("AT+CREG?\r"... with put_command("AT+CREG?\n"... in modeminit.c. Set baudrate=115200
+and mode=new. This phone was reported as unstable by one user.
+
+Note 3)
+Enter "memory_start=0" into the config file. If you removed the PIN
+protection from your SIM card, this modem says that the PIN is
+locked, which is not true. Remove the pin=1234 line from the config
+file, then the program will ignore that instead of stopping with an
+error message. The linux driver for 3G/UMTS version can be loaded with
+the command "modprobe usbserial vendor=0x0af0 product=0x5000". I assume
+that loading the driver works similar for the other versions of that
+card.
+The device name is /dev/usb/ttyUSB0. 
+
+Note 4)
+On Linux, this Modem needs the HSO driver from http://www.pharscape.org. 
+Disable hardware handshake with rtscts=no. When you need to receive messages, set the option memory_start=0.
+
